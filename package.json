@@ -1,0 +1,31 @@
+{
+  "name": "hexabot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "built/src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Protegus/Hexabot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Protegus/Hexabot/issues"
+  },
+  "homepage": "https://github.com/Protegus/Hexabot#readme",
+  "devDependencies": {
+    "@types/signale": "^1.4.1",
+    "@typescript-eslint/eslint-plugin": "^4.16.1",
+    "@typescript-eslint/parser": "^4.16.1",
+    "eslint": "^7.21.0",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "eris": "^0.14.0",
+    "pluris": "^0.3.3",
+    "signale": "^1.4.0"
+  }
+}
