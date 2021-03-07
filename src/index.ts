@@ -2,6 +2,8 @@ import Eris from 'eris';
 import Pluris from 'pluris';
 import Signale from 'signale';
 
+import fs from 'fs';
+
 import Config from '../config.json';
 
 Pluris(Eris);
@@ -12,7 +14,7 @@ class Hexabot extends Eris.Client {
     public commands: Map<string, File>;
     public aliases: Map<string, string>;
 
-    public config: Record<string, >;
+    public config: Record<string, string>;
 
     constructor (token: string, options?: Eris.ClientOptions) {
         super(token, options);
@@ -30,16 +32,14 @@ class Hexabot extends Eris.Client {
     }
 }
 
-const Client = new Hexabot(Config.token);
+const client = new Hexabot(Config.token);
 
-Client.on('ready', () => Signale.success("Ready!"));
+client.on('ready', () => client.logger.success("Ready!"));
 
-Client.on('messageCreate', async (msg) => {
+client.on('messageCreate', async (msg) => {
     if (msg.content === "?ping") {
-        await Client.wait(1000);
-
-        msg.channel.createMessage("I waited 1 second!");
+        msg.channel.createMessage("Waited 1 second! Pong!");
     }
 });
 
-Client.connect();
+client.connect();
