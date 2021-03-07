@@ -9,10 +9,10 @@ Pluris(Eris);
 class Hexabot extends Eris.Client {
     public logger: Signale.Signale;
 
-    public commands: Map<string, object>;
+    public commands: Map<string, File>;
     public aliases: Map<string, string>;
 
-    public config: object;
+    public config: Record<string, >;
 
     constructor (token: string, options?: Eris.ClientOptions) {
         super(token, options);
@@ -38,7 +38,7 @@ Client.on('messageCreate', async (msg) => {
     if (msg.content === "?ping") {
         await Client.wait(1000);
 
-        Client.createMessage(msg.channel.id, "I've waited 1 second!");
+        msg.channel.createMessage("I waited 1 second!");
     }
 });
 

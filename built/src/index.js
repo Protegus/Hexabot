@@ -34,7 +34,7 @@ Client.on('ready', () => signale_1.default.success("Ready!"));
 Client.on('messageCreate', (msg) => __awaiter(void 0, void 0, void 0, function* () {
     if (msg.content === "?ping") {
         yield Client.wait(1000);
-        Client.createMessage(msg.channel.id, "I've waited 1 second!");
+        msg.channel.createMessage("I waited 1 second!");
     }
 }));
 Client.connect();
