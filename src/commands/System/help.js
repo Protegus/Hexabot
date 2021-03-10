@@ -38,10 +38,38 @@ class Help extends Command {
         } else {
             const command = this.client.commands.get(args[0].toLowerCase()) || this.client.commands.get(this.client.aliases.get(args[0].toLowerCase()));
             if (!command) {
-                // Return an error embed
+                const embed = new Eris.RichEmbed()
+                    .setColor('#E74C3C')
+                    .setTitle('❌ Command Not Found!')
+                    .setDescription(`${args[0].toProperCase()} is not a valid command nor alias. Please try again!`)
+                    .setTimestamp();
+
+                return message.channel.createMessage({ embed: embed });
             } 
 
-            //Display the information
+            const commandName = command.help.name;
+            const commandDescription = command.help.description;
+            const commandUsage = command.help.usage;
+            const commandAliases = command.conf.aliases;
+            const commandGuildOnly = command.conf.guildOnly;
+            const commandEnabled = command.conf.enabled;
+
+            const commandFolders = fs.readdirSync('./src/commands');
+            const commandCategory = commandFolders.find(folder => fs.readdirSync(`./src/commands/${folder}`).includes(`${commandName}.js`));
+
+            const embed = new Eris.RichEmbed()
+                .setColor('#F1C40F')
+                .setTitle(`${commandName.toProperCase()}`)
+                .setDescription(`${commandDescription}`)
+                .addField('Category', `\`${commandCategory}\``, true)
+                .addField('Usage', `\`${commandUsage.toProperCase()}\``, true)
+                .addField('Guild Only', `\`${commandGuildOnly.toString().toProperCase()}\``, true)
+                .addField('Enabled', `\`${commandEnabled.toString().toProperCase()}\``, true)
+                .setTimestamp();
+
+            if (commandAliases[0]) embed.addField('Aliases', `\`${commandAliases.map(alias => alias.toProperCase()).join('`, `')}\``, true);
+
+            message.channel.createMessage({ embed: embed });
         }
     }
 }

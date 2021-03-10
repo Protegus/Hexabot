@@ -33,7 +33,8 @@ module.exports = class {
         const cmd = this.client.commands.get(command) || this.client.commands.get(this.client.aliases.get(command));
         if (!cmd) return;
 
-        
+        if (!cmd.conf.enabled) return;
+
         if (!this.client.cooldowns.has(command)) {
             this.client.cooldowns.set(command, new Map());
         }
