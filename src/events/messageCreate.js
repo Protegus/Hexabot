@@ -1,3 +1,5 @@
+const Eris = require('eris');
+
 module.exports = class {
     constructor (client) {
         this.client = client;
@@ -10,7 +12,13 @@ module.exports = class {
 
         const prefixMention = new RegExp(`^<@!?${this.client.user.id}> ?$`);
         if (message.content.match(prefixMention)) {
-            return message.channel.createMessage('My prefix is `?`');
+            const embed = new Eris.RichEmbed()
+                .setColor('#2ECC71')
+                .setTitle('❓ Prefix!')
+                .setDescription('The prefix is `?`')
+                .setTimestamp();
+            
+            return message.channel.createMessage({ embed: embed });
         }
 
         if (!message.content.startsWith('?')) return;
@@ -39,27 +47,48 @@ module.exports = class {
 
             if (now < expirationTime) {
                 const timeLeft = (expirationTime - now) / 1000;
-                return message.channel.createMessage(`Please wait ${timeLeft.toFixed(1)} more seconds before running the \`${command}\` command.`);
+
+                const embed = new Eris.RichEmbed()
+                    .setColor('#F1C40F')
+                    .setTitle('⏰ Cooldown!')
+                    .setDescription(`Please wait ${timeLeft.toFixed(1)} more seconds before running the \`${command}\` command.`)
+                    .setTimestamp();
+
+                return message.channel.createMessage({ embed: embed });
             }
         }
 
         timestamps.set(message.author.id, now);
         setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
-        if (!message.guildID && cmd.conf.guildOnly) 
-            return message.channel.createMessage('This command is unavailable via private message. Please run this command in server.');
+        if (!message.guildID && cmd.conf.guildOnly) {
+            const embed = new Eris.RichEmbed()
+                .setColor('#F1C40F')
+                .setTitle('🚫 Guild only command!')
+                .setDescription('This command is unavailable via private message. Please run this command in server.')
+                .setTimestamp();
 
-        if (level < this.client.levelCache[cmd.conf.permLevel])
-            return message.channel.createMessage('You do not have permission to use this command.');
+            return message.channel.createMessage({ embed: embed });
+        }
 
-        if (cmd.args && !args.length) {
-            let reply = 'You didn\'t provide any arguments!';
+        if (level < this.client.levelCache[cmd.conf.permLevel]) {
+            const embed = new Eris.RichEmbed()
+                .setColor('#E74C3C')
+                .setTitle('🚫 Permission Denied!')
+                .setDescription('You do not have permission to use this command!')
+                .setTimestamp();
 
-            if (cmd.usage) {
-                reply += `\nThe proper usage would be: \`?${cmd.usage}`;
-            }
+            return message.channel.createMessage({ embed: embed });
+        }
 
-            return message.channel.createMessage(reply);
+        if (cmd.conf.args && !args.length) {
+            const embed = new Eris.RichEmbed()
+                .setColor('#E74C3C')
+                .setTitle('🗣️ I need more information!')
+                .setDescription('You didn\'t provide any arguments!' + cmd.help.usage ? `\n\nThe correct usage would be: \`${cmd.help.usage}\`` : '' )
+                .setTimestamp();
+
+            return message.channel.createMessage({ embed: embed });
         }
 
         message.author.permLevel = level;

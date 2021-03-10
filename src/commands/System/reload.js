@@ -1,6 +1,7 @@
-const Command = require('../../base/Command');
-
+const Eris = require('eris');
 const fs = require('fs');
+
+const Command = require('../../base/Command');
 
 class Reload extends Command {
     constructor (client) {
@@ -8,7 +9,8 @@ class Reload extends Command {
             name: 'reload',
             description: 'Reloads a command',
             usage: 'reload <command>',
-            permLevel: 'Bot Owner'
+            permLevel: 'Bot Owner',
+            args: true
         });
     }
 
@@ -25,7 +27,13 @@ class Reload extends Command {
         this.client.unloadCommand(`./commands/${folderName}`, command.help.name);
         this.client.loadCommand(`./commands/${folderName}`, command.help.name);
 
-        message.channel.createMessage(`Command \`${command.help.name}\` was reloaded!`);
+        const embed = new Eris.RichEmbed()
+            .setColor('#2ECC71')
+            .setTitle('🔄 Reloaded!')
+            .setDescription(`I have reloaded command: \`${command.help.name}\``)
+            .setTimestamp();
+
+        message.channel.createMessage({ embed: embed });
     }
 }
 

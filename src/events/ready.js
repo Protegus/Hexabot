@@ -4,7 +4,6 @@ module.exports = class {
     }
 
     async run () {
-        this.client.wait(1000);
 
         this.client.logger.success('I am ready!');
     }

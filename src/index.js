@@ -1,4 +1,5 @@
 const Eris = require('eris');
+const Pluris = require('pluris');
 const Signale = require('signale');
 
 const path = require('path');
@@ -6,6 +7,17 @@ const fs = require('fs');
 const { promisify } = require('util');
 
 const Config = require('../config');
+
+Pluris(Eris, {
+    awaitMessages: true,
+    awaitReactions: false,
+    createDMMessage: false,
+    embed: true,
+    endpoints: false,
+    messageGuild: true,
+    roleList: false,
+    webhooks: false
+});
 
 class Hexabot extends Eris.Client {
     constructor (token, options) {
@@ -69,6 +81,12 @@ class Hexabot extends Eris.Client {
     }
 
     async clean (text) {
+        if (text && text.constructor.name == 'Promise')
+            text = await text;
+        
+        if (typeof text !== 'string') 
+            text = require('util').inspect(text, { depth: 1 });
+
         text = text
             .replace(/@/g, '@' + String.fromCharCode(8203))
             .replace(this.config.token, 'BOT_TOKEN');

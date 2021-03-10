@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "eris": "^0.14.0",
+    "hastebin-gen": "^2.0.5",
+    "pluris": "^0.3.3",
     "signale": "^1.4.0"
   }
 }
