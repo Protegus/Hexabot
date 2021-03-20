@@ -14,11 +14,13 @@ class Help extends Command {
     }
 
     async run (message, args) {
+        const guildData = await this.client.db.findById(message.guildID);
+
         if (!args.length) {
             let embed = new Eris.RichEmbed()
                 .setColor('#F1C40F')
                 .setTitle('❓ Help Me! ❓')
-                .setDescription('To view information about a specific command, please run `?help [command]`\n\nPrefix: `?`')
+                .setDescription(`To view information about a specific command, please run \`?help [command]\`\n\nPrefix: \`${guildData.prefix}\``)
                 .setTimestamp();
 
             const commandFolders = fs.readdirSync('./src/commands');
@@ -53,6 +55,7 @@ class Help extends Command {
             const commandAliases = command.conf.aliases;
             const commandGuildOnly = command.conf.guildOnly;
             const commandEnabled = command.conf.enabled;
+            const commandPermLevel = command.conf.permLevel;
 
             const commandFolders = fs.readdirSync('./src/commands');
             const commandCategory = commandFolders.find(folder => fs.readdirSync(`./src/commands/${folder}`).includes(`${commandName}.js`));
@@ -65,6 +68,7 @@ class Help extends Command {
                 .addField('Usage', `\`${commandUsage.toProperCase()}\``, true)
                 .addField('Guild Only', `\`${commandGuildOnly.toString().toProperCase()}\``, true)
                 .addField('Enabled', `\`${commandEnabled.toString().toProperCase()}\``, true)
+                .addField('Permission Required', `\`${commandPermLevel.toProperCase()}\``, true)
                 .setTimestamp();
 
             if (commandAliases[0]) embed.addField('Aliases', `\`${commandAliases.map(alias => alias.toProperCase()).join('`, `')}\``, true);

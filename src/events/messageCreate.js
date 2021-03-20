@@ -10,23 +10,30 @@ module.exports = class {
 
         if (message.guildID && !message.channel.permissionsOf(this.client.user.id).has('sendMessages')) return;
 
+        let guildData = await this.client.db.findById(message.guildID);
+        if (!guildData) {
+            guildData = await this.client.setupConfig(message.guild);
+        }
+
         const prefixMention = new RegExp(`^<@!?${this.client.user.id}> ?$`);
         if (message.content.match(prefixMention)) {
             const embed = new Eris.RichEmbed()
                 .setColor('#2ECC71')
                 .setTitle('❓ Prefix!')
-                .setDescription('The prefix is `?`')
+                .setDescription(`The prefix is \`${guildData.prefix}\``)
                 .setTimestamp();
             
             return message.channel.createMessage({ embed: embed });
         }
 
-        if (!message.content.startsWith('?')) return;
+        if (!message.content.startsWith(guildData.prefix)) return;
 
-        const args = message.content.slice(1).trim().split(/ +/g);
+        const args = message.content.slice(guildData.prefix.length).trim().split(/ +/g);
         const command = args.shift().toLowerCase();
 
         if (message.guildID && !message.member) await message.channel.guild.fetchMembers({ userIDs: [message.author.id] });
+
+        message.guildData = guildData;
 
         const level = this.client.permLevel(message);
 

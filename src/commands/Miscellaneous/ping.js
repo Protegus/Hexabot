@@ -20,7 +20,7 @@ class Ping extends Command {
                 .setColor('#2ECC71')
                 .setTitle('🏓 Pong!')
                 .addField('Roundtrip', `${msg.createdAt - message.createdAt}ms`, true)
-                .addField('Heartbeat', message.guild ? `${Math.round(message.guild.shard.latency)}ms` : 'Cannot calculate unless ran in a server.', true)
+                .addField('Heartbeat', message.guild ? `${Math.round(message.guild.shard.latency)}ms` : `${this.client.shards.get(0).latency}`, true)
                 .setTimestamp();
 
             msg.edit({ embed: embed });

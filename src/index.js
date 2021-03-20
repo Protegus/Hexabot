@@ -1,15 +1,21 @@
 const Eris = require('eris');
 const Pluris = require('pluris');
 const Signale = require('signale');
+const Mongoose = require('mongoose');
 
-const path = require('path');
 const fs = require('fs');
-const { promisify } = require('util');
 
 const Config = require('../config');
 
+Mongoose.connect(Config.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+const dbConnection = Mongoose.connection;
+
+dbConnection.once('open', () => Signale.success('MongoDB Connected!'));
+
+const Hexabot = require('./base/Hexabot');
+
 Pluris(Eris, {
-    awaitMessages: true,
+    awaitMessages: false,
     awaitReactions: false,
     createDMMessage: false,
     embed: true,
@@ -19,81 +25,6 @@ Pluris(Eris, {
     webhooks: false
 });
 
-class Hexabot extends Eris.Client {
-    constructor (token, options) {
-        super(token, options);
-
-        this.config = Config;
-
-        this.commands = new Map();
-        this.aliases = new Map();
-
-        this.cooldowns = new Map();
-
-        this.logger = Signale;
-
-        this.wait = promisify(setTimeout);
-    }
-
-    permLevel (message) {
-        let permLevel = 0;
-
-        const permOrder = this.config.permLevels.slice(0).sort((p, c) => p.level < c.level ? 1 : -1);
-
-        while (permOrder.length) {
-            const currentLevel = permOrder.shift();
-            if (currentLevel.check(message)) {
-                permLevel = currentLevel.level;
-                break;
-            }
-        }
-        return permLevel;
-    }
-
-    loadCommand (commandPath, commandName) {
-        try {
-            const props = new (require(`${commandPath}${path.sep}${commandName}`))(this);
-            this.logger.star(`Loading Command: ${props.help.name}`);
-            props.conf.location = commandPath;
-
-            this.commands.set(props.help.name, props);
-            props.conf.aliases.forEach(alias => {
-                this.aliases.set(alias, props.help.name);
-            });
-
-            return false;
-        } catch (e) {
-            return `Unable to load command ${commandName}: ${e}`;
-        }
-    }
-
-    async unloadCommand (commandPath, commandName) {
-        let command;
-        if (this.commands.has(commandName)) {
-            command = this.commands.get(commandName);
-        } else if (this.aliases.has(commandName)) {
-            command = this.commands.get(this.aliases.get(commandName));
-        }
-        if (!command) return `The command \`${commandName}\` doesn"t seem to exist, nor is it an alias. Try again!`;
-
-        delete require.cache[require.resolve(`${commandPath}${path.sep}${commandName}.js`)];
-        return false;
-    }
-
-    async clean (text) {
-        if (text && text.constructor.name == 'Promise')
-            text = await text;
-        
-        if (typeof text !== 'string') 
-            text = require('util').inspect(text, { depth: 1 });
-
-        text = text
-            .replace(/@/g, '@' + String.fromCharCode(8203))
-            .replace(this.config.token, 'BOT_TOKEN');
-
-        return text;
-    }
-}
 
 const client = new Hexabot(Config.token);
 
@@ -102,7 +33,7 @@ const init = async () => {
     commandFolders.forEach(async (folder) => {
         const commandFiles = fs.readdirSync(`./src/commands/${folder}`).filter(file => file.endsWith('.js'));
         commandFiles.forEach(file => {
-            const response = client.loadCommand(`./commands/${folder}`, file);
+            const response = client.loadCommand(`../commands/${folder}`, file);
             if (response) client.logger.error(response);
         });
     });
@@ -122,6 +53,8 @@ const init = async () => {
     client.config.permLevels.forEach(level => {
         client.levelCache[level.name] = level.level;
     });
+
+    client.loadUtilityFunctions();
 
     client.connect();
 };

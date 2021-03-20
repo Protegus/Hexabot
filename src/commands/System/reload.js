@@ -24,8 +24,8 @@ class Reload extends Command {
         const commandFolders = fs.readdirSync('./src/commands');
         const folderName = commandFolders.find(folder => fs.readdirSync(`./src/commands/${folder}`).includes(`${command.help.name}.js`));
 
-        this.client.unloadCommand(`./commands/${folderName}`, command.help.name);
-        this.client.loadCommand(`./commands/${folderName}`, command.help.name);
+        this.client.unloadCommand(`../commands/${folderName}`, command.help.name);
+        this.client.loadCommand(`../commands/${folderName}`, command.help.name);
 
         const embed = new Eris.RichEmbed()
             .setColor('#2ECC71')
