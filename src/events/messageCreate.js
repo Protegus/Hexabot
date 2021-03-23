@@ -15,6 +15,8 @@ module.exports = class {
             guildData = await this.client.setupConfig(message.guild);
         }
 
+        guildData.save();
+
         const prefixMention = new RegExp(`^<@!?${this.client.user.id}> ?$`);
         if (message.content.match(prefixMention)) {
             const embed = new Eris.RichEmbed()
@@ -34,6 +36,7 @@ module.exports = class {
         if (message.guildID && !message.member) await message.channel.guild.fetchMembers({ userIDs: [message.author.id] });
 
         message.guildData = guildData;
+        console.log(guildData);
 
         const level = this.client.permLevel(message);
 

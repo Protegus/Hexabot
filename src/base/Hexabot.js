@@ -22,6 +22,14 @@ class Hexabot extends Client {
 
         this.logger = Signale;
 
+        this.enum = {
+            colors: {
+                RED: '#E74C3C',
+                GREEN: '#2ECC71',
+                GOLD: '#F1C40F'
+            }
+        };
+
         this.wait = promisify(setTimeout);
     }
 
@@ -106,10 +114,9 @@ class Hexabot extends Client {
             _id: guild.id,
             prefix: '?',
             modRole: modRoleId,
-            adminRole: adminRoleId
+            adminRole: adminRoleId,
+            moderations: []
         });
-
-        await serverConfig.save();
 
         return serverConfig;
     }

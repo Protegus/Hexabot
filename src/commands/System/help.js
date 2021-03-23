@@ -14,13 +14,11 @@ class Help extends Command {
     }
 
     async run (message, args) {
-        const guildData = await this.client.db.findById(message.guildID);
-
         if (!args.length) {
             let embed = new Eris.RichEmbed()
                 .setColor('#F1C40F')
                 .setTitle('❓ Help Me! ❓')
-                .setDescription(`To view information about a specific command, please run \`?help [command]\`\n\nPrefix: \`${guildData.prefix}\``)
+                .setDescription(`To view information about a specific command, please run \`?help [command]\`\n\nPrefix: \`${message.guildData.prefix}\``)
                 .setTimestamp();
 
             const commandFolders = fs.readdirSync('./src/commands');

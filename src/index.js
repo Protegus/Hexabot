@@ -10,7 +10,8 @@ const Config = require('../config');
 Mongoose.connect(Config.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 const dbConnection = Mongoose.connection;
 
-dbConnection.once('open', () => Signale.success('MongoDB Connected!'));
+dbConnection.once('open', () => Signale.success('MongoDB Connected!'))
+    .once('error', (err) => Signale.error(err));
 
 const Hexabot = require('./base/Hexabot');
 
@@ -68,6 +69,10 @@ client.on('disconnect', () => client.logger.warn('Bot is disconnecting...'))
 
 Array.prototype.random = function () {
     return this[Math.floor(Math.random() * this.length)];
+};
+
+Array.prototype.remove = function (value) {
+    return this.filter(item => item !== value);
 };
 
 String.prototype.toProperCase = function () {

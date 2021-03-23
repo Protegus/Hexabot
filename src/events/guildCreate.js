@@ -9,6 +9,7 @@ module.exports = class {
             await this.client.db.findByIdAndDelete(guild.id);
         }
 
-        this.client.setupConfig(guild);
+        const guildData = this.client.setupConfig(guild);
+        guildData.save();
     }
 };
