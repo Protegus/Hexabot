@@ -15,7 +15,7 @@ class Moderations extends ModerationCommand {
     }
 
     async execute (message, args) {
-        const userInfo = this.client.resolveUser(args[0]);
+        const userInfo = await this.client.resolveUser(this.client, args[0]);
         if (!userInfo) {
             const embed = new Eris.RichEmbed()
                 .setColor(this.client.enum.colors.RED)
@@ -26,7 +26,8 @@ class Moderations extends ModerationCommand {
             return message.channel.createMessage({ embed: embed });
         }
 
-        const cases = this.client.db.caseLogs.findById(message.guildID).moderations.filter(moderation => moderation.target === userInfo.id);
+        const dbCases = await this.client.db.caseLogs.findById(message.guildID);
+        const cases = dbCases.moderations.filter(moderation => moderation.target === userInfo.id);
         if (!cases[0]) {
             // User has no cases against them
             const embed = new Eris.RichEmbed()
@@ -45,7 +46,7 @@ class Moderations extends ModerationCommand {
             .setTimestamp();
 
         cases.forEach(moderation => {
-            embed.addField(`Case #\`${moderation.caseNumber}\``, `**Moderation Type:** \`${moderation.moderationType}\`\n**Moderator:** <@${moderation.moderator}>\n**Reason:** \`${moderation.reason}\``);
+            embed.addField(`Case ${moderation.caseNumber}`, `**Moderation Type:** \`${moderation.moderationType.toProperCase()}\`\n**Moderator:** <@${moderation.moderator}>\n**Reason:** \`${moderation.reason}\``);
         });
 
         message.channel.createMessage({ embed: embed });
