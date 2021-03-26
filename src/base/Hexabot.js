@@ -106,6 +106,7 @@ class Hexabot extends Client {
         text = text
             .replace(/@/g, '@' + String.fromCharCode(8203))
             .replace(tokenRegex, 'BOT_TOKEN');
+            
         return text;
     }
 

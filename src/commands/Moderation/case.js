@@ -31,11 +31,11 @@ class Case extends ModerationCommand {
             .setColor(this.client.enum.colors.GREEN)
             .setTitle('Case Information')
             .setDescription(`Information for case number: \`${args[0]}\``)
-            .addField('Moderation Type', `${caseInfo.moderationType}`, true)
+            .addField('Moderation Type', `${caseInfo.moderationType.toProperCase()}`, true)
             .addField('Moderator', `<@${caseInfo.moderator}>`, true)
             .addField('Target', `<@${caseInfo.target}>`, true)
             .addField('Reason', `${caseInfo.reason}`, true)
-            .addField('Date', `${caseInfo.date}`, true)
+            .addField('Date', `${caseInfo.date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })} PST`, true)
             .setTimestamp();
 
         message.channel.createMessage({ embed: embed });
