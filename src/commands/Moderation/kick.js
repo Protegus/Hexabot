@@ -60,7 +60,7 @@ class Kick extends ModerationCommand {
         });
     }
 
-    async run (message, args) {
+    async execute (message, args) {
         const member = this.client.resolveMember(message, args[0]);
         if (!member) {
             const embed = new Eris.RichEmbed()
@@ -80,7 +80,7 @@ class Kick extends ModerationCommand {
         console.log(reason);
         member.kick(reason);
 
-        this.logCase(message.guildData, {
+        this.logCase(message.caseLogs, {
             moderationType: 'kick',
             moderator: message.author.id,
             target: member.id,

@@ -17,7 +17,7 @@ class Prefix extends Command {
 
     async run (message, args) {
         const newPrefix = args.join(' ').trim();
-        await this.client.db.findByIdAndUpdate(message.guildID, { prefix: newPrefix });
+        await this.client.db.guildSettings.findByIdAndUpdate(message.guildID, { prefix: newPrefix });
 
         const embed = new Eris.RichEmbed()
             .setColor('#2ECC71')

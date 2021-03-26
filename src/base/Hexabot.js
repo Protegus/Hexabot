@@ -6,6 +6,7 @@ const { readdirSync } = require('fs');
 const Config = require('../../config');
 
 const serverConfig = require('../models/serverConfig');
+const caseLogs = require('../models/caseLogs');
 
 class Hexabot extends Client {
     constructor (token, options) {
@@ -16,7 +17,10 @@ class Hexabot extends Client {
         this.commands = new Map();
         this.aliases = new Map();
 
-        this.db = serverConfig;
+        this.db = {
+            guildSettings: serverConfig,
+            caseLogs: caseLogs
+        };
 
         this.cooldowns = new Map();
 
@@ -110,15 +114,23 @@ class Hexabot extends Client {
         const adminRoleId = guild.roles.find(r => r.name.toLowerCase() === 'admin')
             || guild.roles.find(r => r.name.toLowerCase() === 'administrator') || null; 
 
-        const serverConfig = new this.db({
+        const serverConfig = new this.db.guildSettings({
             _id: guild.id,
             prefix: '?',
             modRole: modRoleId,
-            adminRole: adminRoleId,
-            moderations: []
+            adminRole: adminRoleId
         });
 
         return serverConfig;
+    }
+
+    async setupCaseLogs (guild) {
+        const caseLogs = new this.db.caseLogs({
+            _id: guild.id,
+            moderations: []
+        });
+
+        return caseLogs;
     }
 }
 

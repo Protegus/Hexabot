@@ -5,9 +5,9 @@ class ModerationCommand extends Command {
         super(client, options);
     }
 
-    async logCase (guildData, caseObj) {
-        const caseNum = guildData.moderations.length + 1;
-        await this.client.db.findByIdAndUpdate(guildData._id, { $push: {
+    async logCase (caseLogs, caseObj) {
+        const caseNum = caseLogs.moderations.length + 1;
+        await this.client.db.caseLogs.findByIdAndUpdate(caseLogs._id, { $push: {
             moderations: {
                 caseNumber: caseNum,
                 moderationType: caseObj.moderationType,
@@ -17,6 +17,20 @@ class ModerationCommand extends Command {
                 date: new Date()
             }
         }});
+    }
+
+    async run (message, args) {
+        // Ensure caseLogs db exists for the guild
+        let caseLogs = await this.client.db.caseLogs.findById(message.guildID);
+        if (!caseLogs) {
+            caseLogs = await this.client.setupCaseLogs(message.guild);
+        }
+
+        await caseLogs.save();
+
+        //Now that we've verified that it exists, run the actual command.
+        message.caseLogs = caseLogs;
+        this.execute(message, args);
     }
 }
 

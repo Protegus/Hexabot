@@ -7,11 +7,11 @@ const fs = require('fs');
 
 const Config = require('../config');
 
-Mongoose.connect(Config.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+Mongoose.connect(Config.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, autoIndex: false });
 const dbConnection = Mongoose.connection;
 
 dbConnection.once('open', () => Signale.success('MongoDB Connected!'))
-    .once('error', (err) => Signale.error(err));
+    .on('error', (err) => Signale.error(err));
 
 const Hexabot = require('./base/Hexabot');
 
@@ -27,7 +27,7 @@ Pluris(Eris, {
 });
 
 
-const client = new Hexabot(Config.token);
+const client = new Hexabot(Config.token, { restMode: true });
 
 const init = async () => {
     const commandFolders = fs.readdirSync('./src/commands');

@@ -5,15 +5,6 @@ const perServer = new Schema({
     prefix: String,
     modRole: String,
     adminRole: String,
-
-    moderations: [{
-        caseNumber: Number,
-        moderationType: String,
-        moderator: String,
-        target: String,
-        reason: String,
-        date: Date
-    }]
 });
 
 module.exports = model('ServerConfig', perServer);

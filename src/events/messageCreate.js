@@ -7,15 +7,15 @@ module.exports = class {
 
     async run (message) {
         if (message.author.bot) return;
-
+    
         if (message.guildID && !message.channel.permissionsOf(this.client.user.id).has('sendMessages')) return;
 
-        let guildData = await this.client.db.findById(message.guildID);
+        let guildData = await this.client.db.guildSettings.findById(message.guildID);
         if (!guildData) {
             guildData = await this.client.setupConfig(message.guild);
         }
 
-        guildData.save();
+        await guildData.save();
 
         const prefixMention = new RegExp(`^<@!?${this.client.user.id}> ?$`);
         if (message.content.match(prefixMention)) {
@@ -36,7 +36,6 @@ module.exports = class {
         if (message.guildID && !message.member) await message.channel.guild.fetchMembers({ userIDs: [message.author.id] });
 
         message.guildData = guildData;
-        console.log(guildData);
 
         const level = this.client.permLevel(message);
 
