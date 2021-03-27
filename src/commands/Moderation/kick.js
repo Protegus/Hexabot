@@ -77,10 +77,9 @@ class Kick extends ModerationCommand {
         const reason = args[1] ? args.slice(1).join(' ') : null;
         if (reason) description += `\n\nReason: \`${reason}\``;
 
-        console.log(reason);
-        member.kick(reason);
+        await member.kick(reason);
 
-        this.logCase(message.caseLogs, {
+        await this.logCase(message.caseLogs, {
             moderationType: 'kick',
             moderator: message.author.id,
             target: member.id,
