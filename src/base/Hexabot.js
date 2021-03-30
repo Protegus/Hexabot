@@ -58,9 +58,9 @@ class Hexabot extends Client {
             this.logger.star(`Loading Command: ${props.help.name}`);
             props.conf.location = commandPath;
 
-            this.commands.set(props.help.name, props);
+            this.commands.set(props.help.name.toLowerCase(), props);
             props.conf.aliases.forEach(alias => {
-                this.aliases.set(alias, props.help.name);
+                this.aliases.set(alias.toLowerCase(), props.help.name.toLowerCase());
             });
 
             return false;
