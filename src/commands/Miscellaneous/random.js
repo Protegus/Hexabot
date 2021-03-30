@@ -9,7 +9,7 @@ class Random extends Command {
             description: 'Selects a random choice from a list supplied.',
             usage: 'random <option1>, <option2>, etc.',
             args: true,
-            aliases: ['choose', 'choice']
+            aliases: ['choose', 'choice', 'choices']
         });
     }
 
