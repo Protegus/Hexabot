@@ -14,7 +14,7 @@ class Unban extends ModerationCommand {
     }
 
     async execute (message, args) {
-        const user = await this.client.resolveUser(args[0]);
+        const user = await this.client.resolveUser(this.client, args[0]);
         if (!user) {
             const embed = new Eris.RichEmbed()
                 .setColor(this.client.enum.colors.RED)
@@ -25,7 +25,33 @@ class Unban extends ModerationCommand {
             return message.channel.createMessage({ embed: embed });
         }
 
-        // Still in progress
+        const guildBans = await message.guild.getBans();
+        const banInfo = guildBans.find(ban => ban.user.id === user.id);
+
+        if (!banInfo) {
+            const embed = new Eris.RichEmbed()
+                .setColor(this.client.enum.colors.RED)
+                .setTitle('Cannot Find Banned User')
+                .setDescription('I could not find the specified banned user. Either the person you specified isn\'t banned, or you didn\'t provide a valid user. Please either mention the user or provide their user id.')
+                .setTimestamp();
+
+            return message.channel.createMessage({ embed: embed });
+        }
+
+        let description = `I have successfully unbanned \`${user.username}#${user.discriminator}\``;
+
+        const reason = args[1] ? args.slice(1).join(' ') : null;
+        if (reason) description += `\n\nReason: \`${reason}\``;
+
+        await message.guild.unbanMember(user.id, reason);
+
+        const embed = new Eris.RichEmbed()
+            .setColor(this.client.enum.colors.GREEN)
+            .setTitle('Unbanned User')
+            .setDescription(description)
+            .setTimestamp();
+
+        message.channel.createMessage({ embed: embed });
     }
 }
 
