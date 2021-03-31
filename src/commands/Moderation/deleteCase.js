@@ -5,12 +5,12 @@ const ModerationCommand = require('../../base/ModerationCommand');
 class RemoveCase extends ModerationCommand {
     constructor (client) {
         super(client, {
-            name: 'removeCase',
-            description: 'Removes a case log from the server\'s cases.',
-            usage: 'removeCase <case number>',
+            name: 'deleteCase',
+            description: 'Deletes a case log from the server\'s cases.',
+            usage: 'deleteCase <case number>',
             guildOnly: true,
             args: true,
-            aliases: ['rmCase', 'deleteCase']
+            aliases: ['deleteCase']
         });
     }
 
